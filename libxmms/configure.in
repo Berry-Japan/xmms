@@ -1,0 +1,100 @@
+dnl Process this file with autoconf to produce a configure script.
+
+AC_INIT([configfile.c])
+
+AM_CONFIG_HEADER([config.h])
+
+dnl libtool version:
+LIBXMMS_MAJOR_VERSION=4
+LIBXMMS_MINOR_VERSION=1
+LIBXMMS_MICRO_VERSION=3
+LIBXMMS_VERSION=$LIBXMMS_MAJOR_VERSION.$LIBXMMS_MINOR_VERSION.$LIBXMMS_MICRO_VERSION
+
+AM_INIT_AUTOMAKE([libxmms], [$LIBXMMS_VERSION])
+
+AC_SUBST([LIBXMMS_MAJOR_VERSION])
+AC_SUBST([LIBXMMS_MINOR_VERSION])
+AC_SUBST([LIBXMMS_MICRO_VERSION])
+
+AC_PREFIX_PROGRAM([xmms])
+dnl Checks for programs.
+AC_PROG_CC
+AC_PROG_INSTALL
+AC_PROG_LN_S
+AC_PROG_MAKE_SET
+
+AM_PROG_LIBTOOL
+AM_ENABLE_STATIC
+AM_ENABLE_SHARED
+AM_LANGINFO_CODESET
+
+AC_C_BIGENDIAN
+
+XMMS_FUNC_POSIX([sched_setscheduler nanosleep])
+
+AM_PATH_GLIB([1.2.2],,[AC_MSG_ERROR([*** GLIB >= 1.2.2 not installed - please install first ***])])
+AM_PATH_GTK([1.2.2],,[AC_MSG_ERROR([*** GTK+ >= 1.2.2 not installed - please install first ***])],[gthread])
+
+if test -n "$GCC"
+then
+  CFLAGS="$CFLAGS -Wall -Wpointer-arith"
+fi
+
+AC_HEADER_TIME
+
+AC_CHECK_HEADERS([sched.h])
+AC_CHECK_HEADERS([sys/sched.h])
+AC_CHECK_HEADERS([unistd.h])
+AC_CHECK_HEADERS([sys/time.h])
+
+if test -d /usr/local/lib; then
+  LDFLAGS="$LDFLAGS -L/usr/local/lib"
+fi
+if test -d /usr/local/include; then
+  CPPFLAGS="$CPPFLAGS -I/usr/local/include"
+fi
+
+AM_ICONV
+
+AC_CACHE_CHECK([for nl_langinfo(CODESET)], [xmms_cv_func_langinfo], [
+AC_TRY_COMPILE([#include <langinfo.h>],
+        [char *codeset = nl_langinfo (CODESET);],
+   xmms_cv_func_langinfo=yes,
+   xmms_cv_func_langinfo=no)])
+if test "x$xmms_cv_func_langinfo" = "xyes"; then
+  AC_DEFINE([HAVE_CODESET],,[Define if nl_langinfo(CODESET) is available.])
+fi
+
+AC_ARG_ENABLE(iconv,
+    [  --disable-iconv         Disable iconv support.],
+    [  enable_iconv=$enableval ],
+    [  enable_iconv=yes ])
+
+AC_ARG_ENABLE(kanji,
+    [  --enable-kanji          Enable kanji support.],
+    [  enable_kanji=$enableval ],
+    [  enable_kanji=no ])
+
+if test "$enable_iconv" = "yes"; then
+  AC_MSG_CHECKING(if iconv support wanted)
+  if test "$am_cv_func_iconv" = "yes"; then
+    AC_MSG_RESULT(yes)
+  else
+    AC_MSG_RESULT([yes, but lack of iconv functions])
+  fi
+else
+  AC_MSG_CHECKING(if iconv support wanted)
+  AC_MSG_RESULT(no)
+fi
+
+AC_MSG_CHECKING(if kanji support wanted)
+if test "$enable_kanji" = "yes"; then
+  AC_DEFINE(KANJI,, [Define if you want Japanese kanji support.])
+  AC_MSG_RESULT(yes)
+else
+  AC_MSG_RESULT(no)
+fi
+
+AC_OUTPUT([
+Makefile
+])

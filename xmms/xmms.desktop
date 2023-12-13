@@ -1,0 +1,22 @@
+[Desktop Entry]
+Name=XMMS
+Comment=X Multimedia System
+comment[az]=X Multimedya Sistemi
+comment[ca]=Sistema MultimÔ≈ia per a X
+comment[cs]=Multimedi·Õn)BÌ p$)Bè∆hr·◊a)BË
+comment[es]=Sistema Multimedia para X
+comment[gl]=Sistema Multimedia para X
+comment[hr]=X Multimedijski Sustav
+comment[ja]=X •ﬁ•Î•¡•·•«•£•¢•∑•π•∆•‡
+comment[nn]=X Multimedia-system
+comment[pt_BR]=X Multimedia System
+comment[ro]=X MultiMedia Sistem
+comment[th]=é√é–é∫é∫é¡é—é≈éµé‘é¡é’‡∂é’é¬é∫éπ X
+comment[tr]=X Multimedya Sistem
+comment[zh_TW]=X é¶hé¥Cé≈Ú™té≤éŒ
+Encoding=Legacy-Mixed
+Exec=xmms
+Icon=xmms_mini.xpm
+MimeType=audio/x-scpls;audio/x-mpegurl;audio/mpegurl;audio/mp3;audio/x-mp3;audio/mpeg;audio/x-mpeg;audio/x-wav;application/x-ogg
+Terminal=0
+Type=Application

@@ -1,0 +1,203 @@
+xmms のタグ表示/編集のコード変換 + α
+(C)Copyright 1999-2007 by Hiroshi Takekawa <sian@big.or.jp>
+Last Modified: Sun Nov 18 14:04:05 2007.
+
+本パッチの内容
+- パッチ作成時点での cvs の最新の内容
+- iconv によるタグのコードの変換 (mpg123)
+- 日本語タグの表示/編集
+- 最新の ja.po (メッセージの日本語訳)
+- 曲名部分の透過表示
+- Visualization 部分の透過表示
+- equalizer を skin の画像で上書き
+   focus あわせると必要なものはちゃんと表示されます。
+- lzh な skin に対応
+- （po の msgid から Non-ASCII を排除）
+
+patch で入手された方は patch をあててください。source で入手された方は
+そのままで結構です。
+
+普通に ./configure して make してください。 FreeBSD 等一部のシステムで
+は、libiconv が見つからずに、うまくいかないことがあるようです。それらも
+検出できるよう修正してみましたが、普通の ./configure でうまくいかない場
+合は、
+
+CPPFLAGS=-I/usr/local/include LDFLAGS=-L/usr/local/lib ./configure
+
+とするとうまくいくようです（Mitzyuki IMAIZUMIさんによるご報告）。
+
+タグのコードの変換は iconv で行います。iconv が標準でない場合は
+libiconv を install すれば使えるようになると思います。iconv が support
+する任意のコード間の変換が可能になります。この場合、--enable-kanji は変
+換コードのデフォルトを日本語向けに指示するに過ぎなくなりますのでつけな
+くても自分で設定すればちゃんと動きます。
+
+アップグレードで古いバージョンの設定ファイルがある場合など、日本語向け
+のコード変換を手動で設定する必要がある場合は、オプション→設定→オーディ
+オ入出力プラグイン→MPEG Layer 1/2/3→タイトル を開いて、「読込時の変
+換」「書込時の変換」にチェックをいれて、SHIFT_JIS→EUC-JP、EUC-JP→
+SHIFT_JIS とします。
+
+iconv が使えない、使いたくない場合は configure する時に
+--disable-iconv をつけてください。この場合には自前の変換コードにより日
+本語 (SJIS,EUC) だけは support できます。--enable-kanji をつけて
+compile してください。
+
+$ ./configure --enable-kanji && make
+$ su
+# make install
+
+曲のタイトル、イコライザ、アナライザの透過はメニューから設定できます。
+
+フォントを設定しないと日本語がでません。フォントの設定は xmms のメニュー
+からできます。フォントセットの使用、 X のフォントを使う、を有効にして
+ください。
+
+フォントの設定例: (あまり参考にならないかも…)
+ノート向け(要naga10):
+playlist_font=-adobe-helvetica-medium-r-*-*-10-*,naga10,-misc-fixed-medium-r-normal--10-90-75-75-c-50-jisx0201.1976-0
+mainwin_font=-adobe-helvetica-medium-r-*-*-10-*,naga10,-misc-fixed-medium-r-normal--10-90-75-75-c-50-jisx0201.1976-0
+
+デスクトップ向け(要mnkaname):
+playlist_font=-adobe-helvetica-bold-r-*-*-10-*,-misc-fixed-medium-r-normal--10-90-*-*-*-*-*
+mainwin_font=-mnkaname-fixed-medium-r-normal-*-*-110-*-*-c-*-jisx0208.1983-0
+
+HISTORY:
+
+2007/11/18: xmms-1.2.11 base.
+2006/08/17: cvs の変更を反映。iconvで変換に失敗した場合、途中まで変換し
+            たごみを使わないようにした。
+2006/07/29: cvs の変更を反映。ja.po の更新。
+2006/05/24: libiconv の検索を改善。Thanks to Mr. Mitzyuki IMAIZUMI.
+2005/12/31: cvs の変更を反映。ja.po の更新。
+2004/05/29: cvs の変更を反映。ja.po の更新。
+2004/04/15: cvs の変更を反映。id3tag v2 のバッファの確保が動的になった
+            ことに追従。ja.po の更新。
+2004/03/02: xmms-1.2.10 base. cvs の変更を反映。skin によっては落ちてし
+	    まうバグを修正。Problem reported by Mr. UTUMI Hirosi.
+2004/01/31: xmms-1.2.9 base. cvs の変更を反映。libtool を 1.5.2 に upgrade.
+2004/01/12: cvs の変更を反映。
+2003/12/12: cvs の変更を反映。コードの選択をわかりやすくした。
+2003/10/04: cvs の変更を反映。ja.po の更新。
+2003/09/06: xmms-1.2.8 base.
+2003/08/12: cvs の変更を反映。ja.po の更新。
+2003/05/02: cvs の変更を反映(キュー)。ja.po の更新。
+2003/01/07: cvs の変更を反映(ALSA プラグイン)。ja.po の更新。
+2002/11/21: cvs の変更を反映。ja.po の更新。
+2002/10/15: 透過閾値のtooltipが日本語だと改行されないのを修正。透過閾
+            値の現在値がちゃんと設定されないのを修正。Patch by
+            Mr. Shun-ichi TAHARA <jado@flowernet.gr.jp>.
+2002/10/12: cvs の変更を反映。ja.po の更新。スキンの文字データの背景色
+            のゆらぎを吸収できるようにした。シェードしている時、Xフォ
+            ントを使っていない時のバグを修正。numbers_ex.bmpがない場合
+            のバグを修正。Problem reported and reference patch made by
+            Mr. Shun-ichi TAHARA <jado@flowernet.gr.jp>.
+2002/09/30: cvs の変更を反映。ja.po の更新。
+2002/09/01: textbox で xfont を使わない時の透過サポート。時間表示部分の透過。
+2002/07/23: cvs の変更を反映。ja.po の更新。iconv の手動設定が必要な場合を追記。
+2002/05/12: cvs の変更を反映。ja.po の更新。'make dist'時の不具合を修
+	    正。Problem reported by Mr. Fuyuhiko Maruyama
+	    <fuyuhik8@is.titech.ac.jp>.
+2002/03/26: cvs の変更を反映。ja.po の更新。
+2002/03/05: xmms-1.2.7 base. po の msgid から Non-ASCII を排除した。
+2002/02/15: xmms-1.2.7-pre1 base.
+2002/01/23: cvs の変更を反映。ja.po の更新。--disable-iconv が効いてい
+	    ないのを修正。FreeBSD で起動時に落ちる、再生しようとすると
+	    かたまる、といった不具合を修正。Thanks to Toshiyuki
+	    Kawahara.
+2002/01/14: cvs の変更を反映。iconv まわりの変更。Problem reported by
+	    Mr. Kenichi OKADA <okada@opaopa.org>.
+2002/01/09: xmms-1.2.6 base.
+2001/09/13: libiconv support. bug fix.
+2001/09/12: iconv support. libtool を 1.4.2 に upgrade.
+2001/08/27: Upgraded automake to 1.5.
+2001/08/19: cvs の変更を反映。ja.po の更新.
+2001/07/20: cvs の変更を反映。ja.po の更新.
+2001/06/21: xmms-1.2.5 base.
+2001/06/01: cvs の変更を反映。
+2001/05/15: id3v2 tag の日本語に対応。Problem reported by Mr. Konosuke
+            Watanabe <nosuke@am.ics.keio.ac.jp>.
+2001/05/10: 1.2.5-pre1 base. fontset が使用できなかった bug への fix 
+	    が、私に送られてきましたが、本家の bug なので、 commit し
+	    てもらいました。Kudos to Mr. Konosuke Watanabe
+	    <nosuke@am.ics.keio.ac.jp>.
+2001/05/01: cvs の変更の反映。ja.po の更新。GDK の Warning の除去。
+2001/03/31: tag やファイル名が EUC の時の bug fix。Thanks to
+	    Mr. Fumihiko Murata <fmurata@p1.tcnet.ne.jp>.
+2001/03/27: cvs の変更を反映。--enable-transparenthack の廃止。
+2001/03/23: visualizer の透過もメニューから設定できるようにした。
+2001/03/22: equalizer の透過もメニューから設定できるようにした。
+2001/03/21: cvs の変更を反映。ja.po の更新。textbox の透過をメニューか
+	    ら設定できるようにした。
+2001/03/15: cvs の変更を反映。gnomexmms で tooltip に曲名が出るように
+	    した (commited) 。skin の読み込みがおかしかったのを fix。
+	    Thanks to Mr. Konosuke Watanabe <nosuke@am.ics.keio.ac.jp>.
+2001/03/09: cvs の変更を反映。ja.po の更新。
+2001/02/10: cvs の変更を反映。ja.po の更新。
+            gettext の使い方に関する bug の修正 (commited)
+2001/01/19: tag の漢字コードが EUC の場合にも対応。
+            ただし書きこみと SJIS になります。
+2001/01/04: cvs の変更に追随。ja.po の更新。
+
+2000/11/10: cvs の変更を反映。wchar.h のない (従来の方法の方の) コード
+	    が追従しきれてなかったので修正。Thanks to Toshiyuki Kawahara.
+2000/10/22: X の font で表示できるコードが入りはじめたので追従。どうや
+	    らまともに表示できるようなので texthack を廃止し、フォント
+	    の cache 部分だけ fontcache として残した。
+2000/10/17: wchar まわりのコードが入りはじめたので追従しはじめる。まだ
+	    不完全。locale が正しく働かないとうまく表示されなくなる。
+	    tag の処理等の関係上、 glibc2 ユーザも、まだ--enable-kanji 
+	    が必要。
+2000/09/21: 1.2.3 release.
+2000/09/17: イコライザの調整時に波の線がのこってしまうバグをとった。
+2000/09/15: cvs の変更を反映。
+2000/09/04: cvs の変更を反映。ja.po の更新。
+2000/08/30: cvs の変更を反映および追随。
+2000/08/11: cvs の変更を反映。ja.po の更新。
+2000/08/01: cvs の変更を反映。skin の色まわりは本家で修正された。ja.po の更新。
+2000/07/20: cvs の変更を反映。
+2000/07/12: xmms-1.2.2 base. gdk_*_width の一部を_measure に。Thanks
+	    to Mr. Fumihiko Murata <fmurata@p1.tcnet.ne.jp>
+2000/07/07: さらに変更して...のつけ方を変えた。cvs の変更を反映。
+2000/07/03: 曲情報の構成の変更。cvs の変更を反映。
+2000/06/27: playlist の表示の高速化。cvs の変更を反映。
+2000/06/20: 1.2.1 release.
+2000/06/13: --enable-transparenthack を追加。1.2.0 release.
+2000/06/12: equalizer に focus がある時は、 slider のボタンがみえるようにした。
+2000/06/08: equalizer の slider, graph を skin で上書きできるようにした。
+2000/06/07: equalizer のボタンを skin で上書きできるようにした。
+2000/06/05: Visualization Window の透過。
+2000/06/04: 曲名情報等の透過。
+2000/06/03: 曲情報が短くなるデータの場合に落ちる bug を fix. cvs の変更を反映。
+2000/05/27: cvs の変更を反映し、po を更新した。
+2000/05/13: cvs の変更を反映し、depth32 な bmp への対応を書きなおした。
+2000/04/25: cvs の変更を反映。
+2000/04/14: cvs の変更を反映。
+2000/04/04: cvs の変更を反映。
+2000/03/21: ja.po の update.
+2000/03/06: 本家 cvs の変更を反映。
+2000/03/03: ja.po の update.
+2000/02/26: ja.po の update.
+2000/02/25: text_color を廃止して skin のカラーを使うようにした。
+            skin の色がおかしいのを直した。
+            Thanks to Mr. Nobuhiro Yasutomi <nobu@rd.isac.co.jp> for his patch
+2000/02/09: wmxmms の i18n, ja.po 更新。
+2000/02/07: gettextize に伴い ja.po を追加。
+2000/02/01: xmms-1.0.1 への patch.
+2000/01/28: xmms-1.0.0 への patch.
+2000/01/24: widget に入る文字列の長さの決定を gdk_text_width () にまか
+            せるようにした。font から情報を得るので cfg.text_height を
+            廃止した。
+2000/01/06: 長いこと懸案だった unexpected async reply 問題がたぶん解決
+            なんか depth が 32 な bmp が Skin にあったので対応。
+1999/12/01: playlist 表示時に EUC を考慮して...をいれるようにした。
+1999/11/15: xmms-0.9.5.1 への patch (bug fix).
+1999/09/28: xmms-0.9.5.1 への patch.
+1999/09/24: xmms-0.9.5 への patch (deleted).
+1999/08/08: xmms-0.9.1 への patch を更新。
+1999/06/19: xmms-0.9.1 への patch (obsolete, deleted).
+1999/06/12: xmms-0.9 への patch (obsolete, deleted).
+1999/04/14: beta1.1 への patch (obsolete, deleted).
+1999/04/13: beta1 への patch (obsolete, deleted).
+1999/02/15: alpha3 への patch (obsolete, deleted).
+1999/02/11: alpha2 への patch (obsolete, deleted).

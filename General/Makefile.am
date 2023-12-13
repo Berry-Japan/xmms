@@ -1,0 +1,3 @@
+ALL_PLUGINS = ir joystick song_change
+SUBDIRS = @GENERAL_PLUGINS@
+DIST_SUBDIRS = $(ALL_PLUGINS)

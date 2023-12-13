@@ -1,0 +1,3 @@
+ALL_PLUGINS = blur_scope sanalyzer opengl_spectrum
+SUBDIRS = @VISUALIZATION_PLUGINS@
+DIST_SUBDIRS = $(ALL_PLUGINS)
